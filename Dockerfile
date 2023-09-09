@@ -24,5 +24,5 @@ RUN mkdir -p ~/miniconda3 && \
     pip install numpy==1.23.5 && \
     pip install protobuf==3.20.*
 
-# COPY entrypoint.sh /entrypoint.sh
-# ENTRYPOINT ["/entrypoint.sh"]
+COPY entrypoint.sh /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
