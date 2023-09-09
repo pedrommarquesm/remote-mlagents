@@ -1,0 +1,12 @@
+version: "3"
+services:
+  test_image_basic:
+    image: test.image.basic.v.0.1:latest
+    container_name: test-azure-container
+    ports:
+      - "5004:5004"
+      - "6006:6006"
+    # volumes:
+    #   - ./unity-volume:/unity-volume
+    # command:
+    #   ["--env=/unity-volume/TestBuild.x86_64", "--run_id=testid", "--train"]
