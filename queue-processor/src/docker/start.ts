@@ -27,7 +27,11 @@ const config = {
   },
 };
 
-async function startNewContainer(docker: Docker, containerName: string) {
+async function startNewContainer(
+  docker: Docker,
+  containerName: string,
+  runId: string
+) {
   console.log("creating container with name: ", containerName);
   console.log("env var HOST_PATH:", process.env.HOST_PATH);
   console.log("bind: ", `${process.env.HOST_PATH}/unity-volume:/unity-volume`);
@@ -43,7 +47,7 @@ async function startNewContainer(docker: Docker, containerName: string) {
       "--results-dir=/unity-volume/results",
       "/unity-volume/trainer_config.yaml",
       "--env=/unity-volume/game-binaries/TestBuildServerLogs.x86_64",
-      "--run-id=testid",
+      `--run-id=${runId}`,
       "--no-graphics",
     ],
     HostConfig: {
