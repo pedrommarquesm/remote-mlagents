@@ -62,7 +62,7 @@ This document outlines the steps to set an environment variable — specifically
 
    This will set the environment variable for the current session.
 
-### Making it Persistent Across Sessions
+#### Making it Persistent Across Sessions
 
 1. Open your `~/.bashrc` file for editing. You can use any text editor you are comfortable with. For example:
 
@@ -101,7 +101,7 @@ This document outlines the steps to set an environment variable — specifically
    [Environment]::SetEnvironmentVariable("DOCKER_SOCKET_PATH", "\\\\.\\pipe\\docker_engine", [EnvironmentVariableTarget]::Machine)
    ```
 
-### Making it Persistent
+#### Making it Persistent
 
 In both Command Prompt and PowerShell methods above, the environment variable is set in a way that will be persistent across sessions and reboots.
 
