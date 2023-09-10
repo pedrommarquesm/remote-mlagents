@@ -29,8 +29,9 @@ const config = {
 
 async function startNewContainer(docker: Docker, containerName: string) {
   console.log("creating container with name: ", containerName);
-  console.log("bing: ", path.resolve(process.cwd(), "../unity-volume"));
   console.log("env var HOST_PATH:", process.env.HOST_PATH);
+  console.log("bind: ", `${process.env.HOST_PATH}/unity-volume:/unity-volume`);
+
   if (process.env.HOST_PATH === undefined)
     throw new Error("env var HOST_PATH not defined");
 
@@ -46,7 +47,7 @@ async function startNewContainer(docker: Docker, containerName: string) {
       "--no-graphics",
     ],
     HostConfig: {
-      Binds: [`${process.env.HOST_PATH}/unity-volume":/unity-volume`],
+      Binds: [`${process.env.HOST_PATH}/unity-volume:/unity-volume`],
       PortBindings: {
         "5004/tcp": [{ HostPort: "5004" }],
         "6006/tcp": [{ HostPort: "6006" }],
