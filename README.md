@@ -1,13 +1,3 @@
-```
-docker run -it --rm --name mlagent-script-runner \
-    --mount type=bind,source="$(pwd)"/unity-volume,target=/unity-volume \
-    --platform linux/amd64 \
-    -p 5004:5004 \
-    -p 6006:6006 \
-    mlagent-script-runner:latest --results-dir=/unity-volume/results \
-    /unity-volume/trainer_config.yaml --env=/unity-volume/TestBuildServerLogs.x86_64 --run-id=testid --no-graphics
-```
-
 # 1. Build the images
 
 Run both scripts:
@@ -130,3 +120,17 @@ echo $env:DOCKER_SOCKET_PATH
 ```
 
 If everything is set up correctly, this should display the path you've set for the Docker socket.
+
+## Useful manual testing commands:
+
+Execute the container responsible for the mlagents training process:
+
+```
+docker run -it --rm --name mlagent-script-runner \
+    --mount type=bind,source="$(pwd)"/unity-volume,target=/unity-volume \
+    --platform linux/amd64 \
+    -p 5004:5004 \
+    -p 6006:6006 \
+    mlagent-script-runner:latest --results-dir=/unity-volume/results \
+    /unity-volume/trainer_config.yaml --env=/unity-volume/TestBuildServerLogs.x86_64 --run-id=testid --no-graphics
+```

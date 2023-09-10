@@ -24,7 +24,7 @@ async function getActiveContainers(): Promise<Docker.ContainerInfo[]> {
 //       const params = {
 //         QueueUrl: queueUrl,
 //         MaxNumberOfMessages: 1,
-//         WaitTimeSeconds: 20,
+//         WaitTimeSeconds: 20, // Enables long polling, waiting up to 20 seconds (maximum time)
 //       };
 
 //       const data = await sqs.send(new ReceiveMessageCommand(params));
@@ -35,9 +35,16 @@ async function getActiveContainers(): Promise<Docker.ContainerInfo[]> {
 
 //         // ... Process the SQS message as needed ...
 
-//         const containerName = `script-runner-${Date.now()}`;
+//         const dateNow = Date.now();
+//         const containerName = `script-runner-${dateNow}`;
+//         const runId = dateNow.toString();
+
 //         try {
-//           const startResult = await startNewContainer(docker, containerName);
+//           const startResult = await startNewContainer(
+//             docker,
+//             containerName,
+//             runId
+//           );
 
 //           console.log("startResult: ", startResult);
 
@@ -61,7 +68,14 @@ async function getActiveContainers(): Promise<Docker.ContainerInfo[]> {
 
 // pollQueue();
 
-const containerName = `script-runner-${Date.now()}`;
-const runId = Date.now().toString();
+const test = () => {
+  const dateNow = Date.now();
+  const containerName = `script-runner-${dateNow}`;
+  const runId = dateNow.toString();
 
-startNewContainer(docker, containerName, runId);
+  startNewContainer(docker, containerName, runId);
+
+  setTimeout(test, 10000);
+};
+
+test();
