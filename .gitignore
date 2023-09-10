@@ -1,6 +1,6 @@
 # project specific
-unity-volume/**
-!unity-volume/trainer_config.yaml
+# unity-volume/**
+# !unity-volume/trainer_config.yaml
 
 
 # Serverless directories
