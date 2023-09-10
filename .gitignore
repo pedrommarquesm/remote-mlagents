@@ -1,6 +1,5 @@
 # project specific
 unity-volume/**
-unity-volume2
 !unity-volume/trainer_config.yaml
 
 
