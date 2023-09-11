@@ -60,8 +60,16 @@ async function getActiveContainers(): Promise<Docker.ContainerInfo[]> {
 // }
 
 // pollQueue();
+function test() {
+  const containerName = `script-runner-${Date.now()}`;
+  const runId = Date.now().toString();
 
-const containerName = `script-runner-${Date.now()}`;
-const runId = Date.now().toString();
+  startNewContainer(docker, containerName, runId);
+}
 
-startNewContainer(docker, containerName, runId);
+console.log("test1");
+test();
+console.log("test2");
+test();
+console.log("test3");
+test();
