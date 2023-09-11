@@ -75,7 +75,7 @@ const test = () => {
 
   startNewContainer(docker, containerName, runId);
 
-  setTimeout(test, 10000);
+  // setTimeout(test, 10000);
 };
 
 test();

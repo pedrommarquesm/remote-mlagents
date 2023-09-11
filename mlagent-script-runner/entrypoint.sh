@@ -23,16 +23,16 @@ echo "ls unity volume"
 ls /unity-volume
 echo "after ls unity volume"
 
-sleep 5
+# sleep 5
 
-echo "after sleep 5"
+# echo "after sleep 5"
 
 
 # tensorboard --logdir /unity-volume/results --host 0.0.0.0
 
 # mlagents-learn config/trainer_config.yaml --env=../../projects/Cats/CatsOnBicycles.app --run-id=cob_1 --train
 # pass all arguments
-# mlagents-learn $@
+mlagents-learn $@
 
 # Execute additional commands within the activated environment
 # exec "mlagents-learn --help"
