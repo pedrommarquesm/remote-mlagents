@@ -1,7 +1,7 @@
 
 FROM --platform=linux/amd64 ubuntu:jammy-20230804
 
-RUN apt-get update && apt-get install -y build-essential python3-pip wget && \
+RUN apt-get update && apt-get install -y build-essential python3-pip wget xvfb && \
     rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"]
