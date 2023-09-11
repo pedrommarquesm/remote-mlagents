@@ -24,7 +24,7 @@ async function getActiveContainers(): Promise<Docker.ContainerInfo[]> {
 //       const params = {
 //         QueueUrl: queueUrl,
 //         MaxNumberOfMessages: 1,
-//         WaitTimeSeconds: 20,
+//         WaitTimeSeconds: 20, // Enables long polling, waiting up to 20 seconds (maximum time)
 //       };
 
 //       const data = await sqs.send(new ReceiveMessageCommand(params));
