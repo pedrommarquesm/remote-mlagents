@@ -17,7 +17,7 @@ async function startNewContainer(
     Tty: true,
     Cmd: [
       "--results-dir=/unity-volume/results",
-      "/unity-volume/trainer_config.yaml",
+      "/unity-volume/shooter.yaml",
       "--env=/unity-volume/game-binaries/ShooterGraphics.x86_64",
       `--run-id=${runId}`,
       "--no-graphics",
