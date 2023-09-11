@@ -18,7 +18,7 @@ async function startNewContainer(
     Cmd: [
       "--results-dir=/unity-volume/results",
       "/unity-volume/trainer_config.yaml",
-      "--env=/unity-volume/game-binaries/SurvivalShooterServer.x86_64",
+      "--env=/unity-volume/game-binaries/ShooterGraphics.x86_64",
       `--run-id=${runId}`,
       "--no-graphics",
     ],
