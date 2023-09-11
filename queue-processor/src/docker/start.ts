@@ -33,6 +33,7 @@ async function startNewContainer(
   });
 
   console.log("Container", containerName, ": attaching");
+  console.time("timer" + runId);
   container.attach(
     { stream: true, stdout: true, stderr: true },
     (err, stream: NodeJS.ReadWriteStream | undefined) => {
@@ -53,15 +54,18 @@ async function startNewContainer(
         });
         stream.on("end", () => {
           console.log("Container", containerName, ": stream end");
+          console.timeEnd("timer" + runId);
         });
         // stream.on("close", () => {
         //   console.log("Container", containerName, ": stream close");
         // });
         stream.on("error", (err) => {
           console.error("Container", containerName, ": stream error: ", err);
+          console.timeEnd("timer" + runId);
         });
         stream.on("exit", (err) => {
           console.log("Container", containerName, ": stream exit: ", err);
+          console.timeEnd("timer" + runId);
         });
       }
     }
