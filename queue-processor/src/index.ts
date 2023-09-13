@@ -2,74 +2,109 @@ import {
   SQSClient,
   ReceiveMessageCommand,
   DeleteMessageCommand,
+  type DeleteMessageCommandOutput,
+  type ReceiveMessageCommandInput,
+  type DeleteMessageCommandInput,
 } from "@aws-sdk/client-sqs";
 import Docker from "dockerode";
 import startNewContainer from "./docker/start";
 
-// const sqs = new SQSClient({ region: "us-west-2" });
-const docker = new Docker({ socketPath: "/var/run/docker.sock" }); // TODO: replace with the env var: DOCKER_SOCKET_PATH
+const pollDelay = 5000;
+const maxNumberOfContainers = 3;
 
-const queueUrl = "your-sqs-queue-url-here";
+const region = "eu-central-1";
+const AWS_ACCOUNT_ID = "866645210820";
+const GYM_QUEUE_NAME = "vinci-training-gym";
+
+const queueUrl = `https://sqs.${region}.amazonaws.com/${AWS_ACCOUNT_ID}/${GYM_QUEUE_NAME}`;
+
+const sqs = new SQSClient({ region });
+const docker = new Docker({ socketPath: "/var/run/docker.sock" }); // TODO: replace with the env var: DOCKER_SOCKET_PATH
 
 async function getActiveContainers(): Promise<Docker.ContainerInfo[]> {
   const containers = await docker.listContainers();
   return containers.filter((container) => container.Image === "script-runner");
 }
 
-// async function pollQueue() {
-//   try {
-//     const activeContainers = await getActiveContainers();
+async function pollQueue() {
+  console.log("pollQueue()");
+  let pollImmediatly = false;
+  try {
+    const activeContainers = await getActiveContainers();
+    const numOfActiveContainer = activeContainers.length;
+    console.log("Active Container: ", numOfActiveContainer);
+    const freeContainerSlots = maxNumberOfContainers - numOfActiveContainer;
+    if (numOfActiveContainer < maxNumberOfContainers) {
+      const params: ReceiveMessageCommandInput = {
+        QueueUrl: queueUrl,
+        MaxNumberOfMessages: freeContainerSlots,
+        WaitTimeSeconds: 5, // Enables long polling, waiting up to 20 seconds (maximum time)
+      };
 
-//     if (activeContainers.length < 3) {
-//       const params = {
-//         QueueUrl: queueUrl,
-//         MaxNumberOfMessages: 1,
-//         WaitTimeSeconds: 20, // Enables long polling, waiting up to 20 seconds (maximum time)
-//       };
+      console.log("Polling queue");
+      const data = await sqs.send(new ReceiveMessageCommand(params));
+      console.log("received data:", data);
 
-//       const data = await sqs.send(new ReceiveMessageCommand(params));
+      if (data.Messages) {
+        // if we got a message, we want to poll right away (if under containers limit)
+        pollImmediatly = numOfActiveContainer + 1 < 3;
+        const numOfMessages = data.Messages.length;
+        console.log(`received #${numOfMessages}messages:`);
 
-//       if (data.Messages) {
-//         const message = data.Messages[0];
-//         const body = message.Body ? JSON.parse(message.Body) : undefined;
+        const deletePromises: Promise<DeleteMessageCommandOutput>[] = [];
+        data.Messages.forEach((message, i) => {
+          console.log(`message ${i}: ${message}`);
+          const deleteParams: DeleteMessageCommandInput = {
+            QueueUrl: queueUrl,
+            ReceiptHandle: message.ReceiptHandle,
+          };
 
-//         // ... Process the SQS message as needed ...
+          deletePromises.push(sqs.send(new DeleteMessageCommand(deleteParams)));
+        });
 
-//         const containerName = `script-runner-${Date.now()}`;
-//         try {
-//           const startResult = await startNewContainer(docker, containerName);
+        Promise.allSettled(deletePromises);
 
-//           console.log("startResult: ", startResult);
+        // const body = message.Body ? JSON.parse(message.Body) : undefined;
 
-//           const deleteParams = {
-//             QueueUrl: queueUrl,
-//             ReceiptHandle: message.ReceiptHandle,
-//           };
+        // ... Process the SQS message as needed ...
 
-//           await sqs.send(new DeleteMessageCommand(deleteParams));
-//         } catch (error) {
-//           console.error("error starting new container, named: ", containerName);
-//         }
-//       }
-//     }
+        // try {
+        // const containerName = `script-runner-${Date.now()}`;
+        // console.log("creating container with name:", containerName);
+        //   const startResult = await startNewContainer(docker, containerName);
 
-//     setTimeout(pollQueue, 5000);
-//   } catch (err) {
-//     console.error("An error occurred:", err);
-//   }
-// }
+        //   console.log("startResult: ", startResult);
 
-// pollQueue();
-function test() {
-  const containerName = `script-runner-${Date.now()}`;
-  const runId = Date.now().toString();
+        // } catch (error) {
+        //   console.error("error starting new container, named: ", containerName);
+        // }
+      }
 
-  startNewContainer(docker, containerName, runId);
+      console.log("end polling queue, no message");
+    }
+    if (pollImmediatly) {
+      console.log("polling now");
+      pollQueue();
+    } else {
+      console.log("polling now in pollDelay");
+      setTimeout(pollQueue, pollDelay);
+    }
+  } catch (err) {
+    console.error("An error occurred:", err);
+  }
 }
 
-console.log("test1");
-test();
-console.log("test2");
-test();
-console.log("test3");
-test();
+pollQueue();
+// function test() {
+//   const containerName = `script-runner-${Date.now()}`;
+//   const runId = Date.now().toString();
+
+//   startNewContainer(docker, containerName, runId);
+// }
+
+// console.log("test1");
+// test();
+// console.log("test2");
+// test();
+// console.log("test3");
+// test();

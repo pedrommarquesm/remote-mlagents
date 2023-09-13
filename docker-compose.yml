@@ -8,3 +8,4 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./unity-volume:/unity-volume
+      - ~/.aws:/root/.aws:ro
