@@ -32,9 +32,12 @@ async function pollQueue() {
   try {
     const activeContainers = await getActiveContainers();
     const numOfActiveContainer = activeContainers.length;
-    console.log("Active Container: ", numOfActiveContainer);
+    console.log("Active Container:", numOfActiveContainer);
     const freeContainerSlots = maxNumberOfContainers - numOfActiveContainer;
+    console.log("Max Number of active containers:", maxNumberOfContainers);
+    console.log("Free container slots:", numOfActiveContainer);
     if (numOfActiveContainer < maxNumberOfContainers) {
+      console.log(`polling maximum of #${freeContainerSlots} messages`);
       const params: ReceiveMessageCommandInput = {
         QueueUrl: queueUrl,
         MaxNumberOfMessages: freeContainerSlots,
@@ -49,7 +52,7 @@ async function pollQueue() {
         // if we got a message, we want to poll right away (if under containers limit)
         pollImmediatly = numOfActiveContainer + 1 < 3;
         const numOfMessages = data.Messages.length;
-        console.log(`received #${numOfMessages}messages:`);
+        console.log(`received #${numOfMessages} messages:`);
 
         const deletePromises: Promise<DeleteMessageCommandOutput>[] = [];
         data.Messages.forEach((message, i) => {
